@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1f17" />
+    <title>CreateOS Arena · World Cup 2026 Predictions</title>
+    <meta name="description" content="CreateOS Arena — predict World Cup 2026 matches, climb the leaderboard, build streaks, and share your rank card. For fun only." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Disclaimer banner -->
+    <div class="disclaimer" id="disclaimerBar">
+      <span><span class="dot" aria-hidden="true"></span> CreateOS Arena is for fun only. No money, no wagers, no gambling — predict, share, climb.</span>
+      <button class="close" id="disclaimerClose" aria-label="Dismiss disclaimer">×</button>
+    </div>
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🏆</span>
+        <strong>CreateOS Arena</strong>
+        <span class="pill ghost">World Cup 2026</span>
+      </div>
+      <div class="top-actions">
+        <span class="pill streak" id="streakPill">🔥 Day <span id="streakDays">4</span> streak</span>
+        <button class="avatar" id="avatarBtn" aria-haspopup="menu" aria-expanded="false">
+          <span id="avatarInitials">ZT</span>
+        </button>
+        <div class="menu" id="userMenu" role="menu" hidden>
+          <button class="menu-item" data-action="login">Sign in with CreateOS (Google)</button>
+          <button class="menu-item" data-action="favourite">Choose favourite team</button>
+          <button class="menu-item" data-action="share">Share my rank card</button>
+          <button class="menu-item" data-action="logout">Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs" role="tablist">
+      <button class="tab active" role="tab" data-tab="predict" aria-selected="true">
+        <span class="tab-ico">🎯</span> Predict
+      </button>
+      <button class="tab" role="tab" data-tab="leaderboard" aria-selected="false">
+        <span class="tab-ico">📊</span> Leaderboard
+      </button>
+      <button class="tab" role="tab" data-tab="how" aria-selected="false">
+        <span class="tab-ico">ⓘ</span> How to play
+      </button>
+      <button class="tab" role="tab" data-tab="prizes" aria-selected="false">
+        <span class="tab-ico">🎁</span> Prizes
+      </button>
+    </nav>
+
+    <main class="content">
+      <!-- =================== PREDICT =================== -->
+      <section class="panel active" id="tab-predict" role="tabpanel">
+        <!-- Hero strip -->
+        <div class="hero">
+          <div class="hero-head">
+            <div>
+              <div class="muted">Match day <span id="matchDayNum">12</span> · <span id="todayLabel">Wednesday, June 22</span></div>
+              <h1 id="heroTitle"><span id="todayCount">3</span> matches today — make your predictions</h1>
+            </div>
+            <div class="countdown-card" title="Registration is always open">
+              <div class="cd-label">Registration closes in</div>
+              <div class="cd-clock" id="regCountdown">--:--:--</div>
+              <div class="cd-sub">Never — keep predicting, every day counts</div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-val" id="statPoints">34</div>
+              <div class="stat-label">Your points</div>
+              <div class="stat-sub good">+3 today</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val">#<span id="statRank">47</span></div>
+              <div class="stat-label">Your rank</div>
+              <div class="stat-sub">of <span id="statTotal">512</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-val"><span id="statPredCount">11</span>/<span id="statPredTotal">12</span></div>
+              <div class="stat-label">Predicted</div>
+              <div class="stat-sub warn"><span id="statPending">1</span> pending</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val"><span id="statAcc">64</span>%</div>
+              <div class="stat-label">Accuracy</div>
+              <div class="stat-sub">avg: 58%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two column body -->
+        <div class="grid">
+          <div class="col-main">
+            <!-- Favourite team picker -->
+            <div class="fav-card" id="favCard">
+              <div class="fav-left">
+                <div class="fav-title">⭐ Your favourite team</div>
+                <div class="fav-sub" id="favSub">Pick a team to theme your card & follow their news</div>
+              </div>
+              <div class="fav-right">
+                <div class="fav-current" id="favCurrent" hidden>
+                  <span class="flag" id="favFlag">🇧🇷</span>
+                  <span id="favName">Brazil</span>
+                </div>
+                <button class="btn ghost" id="favPick">Choose team</button>
+              </div>
+            </div>
+
+            <div class="point-system">
+              <div class="ps-head">💡 Point system</div>
+              <div class="ps-row">
+                <span class="chip fav">☆ Favourite wins = 1 pt</span>
+                <span class="chip neutral">— Draw = 2 pts</span>
+                <span class="chip under">⚡ Underdog wins = 3 pts</span>
+              </div>
+            </div>
+
+            <h3 class="section-title">Today's matches</h3>
+            <div id="matchList" class="match-list"><!-- matches injected --></div>
+
+            <!-- Favourite team news -->
+            <div class="news-card" id="newsCard" hidden>
+              <div class="news-head">
+                <span>📰 News for <span id="newsTeam">your team</span></span>
+                <span class="muted small">updated just now</span>
+              </div>
+              <ul id="newsList" class="news-list"></ul>
+            </div>
+          </div>
+
+          <aside class="col-side">
+            <!-- Leaderboard widget -->
+            <div class="card lb-widget">
+              <div class="lb-head">
+                <span class="muted small">LEADERBOARD</span>
+              </div>
+              <div class="seg">
+                <button class="seg-btn active" data-lb="all">All-time</button>
+                <button class="seg-btn" data-lb="week">This week <span class="new">New</span></button>
+              </div>
+              <ol class="lb-list" id="lbTop"></ol>
+              <div class="me-row">
+                <div class="me-left">
+                  <span class="me-rank">#<span id="myRank">47</span></span>
+                  <span class="avatar small me">ZT</span>
+                  <span>You · <span id="myPoints">34</span> pts</span>
+                </div>
+                <span class="me-right good">+13 to top 5</span>
+              </div>
+            </div>
+
+            <!-- Streak bonus -->
+            <div class="card streak-card">
+              <div class="streak-head">🔥 <span id="streakHeadDays">5</span>-day streak bonus</div>
+              <div class="streak-dots" id="streakDots"></div>
+              <div class="streak-text" id="streakText">Predict today to hit day 5 and earn <b class="good">+1 bonus point</b>. Miss a day and the streak resets!</div>
+              <div class="streak-table">
+                <div><span class="dim">3d</span> <b>1×</b></div>
+                <div><span class="dim">5d</span> <b>2×</b></div>
+                <div><span class="dim">7d</span> <b>3×</b></div>
+                <div><span class="dim">15d</span> <b>5×</b></div>
+              </div>
+            </div>
+
+            <!-- Share card -->
+            <div class="card share-card">
+              <div class="share-head">📤 Your Day <span id="cardDayNum">10</span> card is ready</div>
+              <div class="rank-card" id="rankCard">
+                <div class="rc-title">CreateOS World Cup Arena</div>
+                <div class="rc-rank">#<span id="rcRank">47</span> <span class="rc-of">of <span id="rcTotal">512</span></span></div>
+                <div class="rc-meta"><span id="rcPoints">34</span> pts · Accuracy <span id="rcAcc">64</span>% · Day <span id="rcDay">12</span></div>
+                <div class="rc-watermark">CREATEOS.SH/ARENA</div>
+              </div>
+              <div class="share-row">
+                <button class="btn dark" id="downloadCard">⬇ Download & share</button>
+              </div>
+              <div class="share-row split">
+                <button class="btn outline" data-share="x">𝕏 Share</button>
+                <button class="btn outline" data-share="ig">📷 Instagram</button>
+                <button class="btn outline" data-share="wa">💬 WhatsApp</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- =================== LEADERBOARD =================== -->
+      <section class="panel" id="tab-leaderboard" role="tabpanel">
+        <div class="hero small">
+          <h2>Global leaderboard</h2>
+          <div class="muted">Live ranks across all CreateOS Arena predictors · <span id="lbTotal">512</span> players</div>
+        </div>
+        <div class="card">
+          <div class="seg">
+            <button class="seg-btn active" data-lb-full="all">All-time</button>
+            <button class="seg-btn" data-lb-full="week">This week</button>
+            <button class="seg-btn" data-lb-full="day">Today</button>
+          </div>
+          <table class="lb-table">
+            <thead>
+              <tr><th>#</th><th>Player</th><th class="hide-sm">Streak</th><th class="hide-sm">Accuracy</th><th>Points</th></tr>
+            </thead>
+            <tbody id="lbFullBody"></tbody>
+          </table>
+        </div>
+
+        <h3 class="section-title">Per-match points breakdown</h3>
+        <div class="card">
+          <table class="lb-table">
+            <thead>
+              <tr><th>Match</th><th>Your pick</th><th>Result</th><th class="hide-sm">Type</th><th>Points</th></tr>
+            </thead>
+            <tbody id="breakdownBody"></tbody>
+          </table>
+          <div class="totals">
+            <span class="muted">Total predictions <b id="totalPreds">11</b></span>
+            <span class="muted">Total points <b id="totalPts">34</b></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== HOW TO PLAY =================== -->
+      <section class="panel" id="tab-how" role="tabpanel">
+        <div class="hero small">
+          <h2>How to play</h2>
+          <div class="muted">Simple rules. Big bragging rights. Zero gambling.</div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <h3>📜 Rules</h3>
+            <ol class="rules">
+              <li>Pick a winner for every match — or a draw.</li>
+              <li>Predictions <b>lock at kickoff</b>. After that, no edits.</li>
+              <li>Points are awarded after the official result.</li>
+              <li>Build a daily streak to multiply your bonus.</li>
+              <li>Share your rank card every 5th day for clout.</li>
+            </ol>
+          </div>
+
+          <div class="card">
+            <h3>🎯 Points system</h3>
+            <div class="ps-grid">
+              <div class="ps-cell fav"><b>1 pt</b><span>Favourite wins</span></div>
+              <div class="ps-cell neutral"><b>2 pts</b><span>Draw</span></div>
+              <div class="ps-cell under"><b>3 pts</b><span>Underdog wins</span></div>
+            </div>
+            <h4>Streak multipliers</h4>
+            <div class="ps-grid four">
+              <div class="ps-cell"><b>3d</b><span>1× bonus</span></div>
+              <div class="ps-cell"><b>5d</b><span>2× bonus</span></div>
+              <div class="ps-cell"><b>7d</b><span>3× bonus</span></div>
+              <div class="ps-cell hot"><b>15d</b><span>5× bonus</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>❓ FAQ</h3>
+          <details open>
+            <summary>When do predictions lock?</summary>
+            <p>Each match locks at the official kickoff time. You'll see a live countdown on the match card.</p>
+          </details>
+          <details>
+            <summary>What happens if a match is postponed?</summary>
+            <p>Your prediction carries to the rescheduled date. If the match is cancelled, the prediction is voided — no points won, no streak broken.</p>
+          </details>
+          <details>
+            <summary>How are favourite vs underdog decided?</summary>
+            <p>We use pre-match win probability. Anything below 35% is the underdog. We update this up to 1 hour before kickoff.</p>
+          </details>
+          <details>
+            <summary>Is this gambling?</summary>
+            <p>No. CreateOS Arena is a free, fun prediction game. No entry fees, no wagering, no cash payouts beyond the announced prize draws.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- =================== PRIZES =================== -->
+      <section class="panel" id="tab-prizes" role="tabpanel">
+        <div class="hero small">
+          <h2>Prizes</h2>
+          <div class="muted">Final tiers TBD — here's what we're locking in.</div>
+        </div>
+        <div class="prize-row">
+          <div class="prize gold">
+            <div class="prize-rank">🥇 1st</div>
+            <div class="prize-title">Champion Bundle</div>
+            <ul>
+              <li>Official replica trophy</li>
+              <li>CreateOS Arena hoodie</li>
+              <li>Featured profile for the season</li>
+            </ul>
+            <button class="btn dark" disabled>Claim opens after final</button>
+          </div>
+          <div class="prize silver">
+            <div class="prize-rank">🥈 2nd / 🥉 3rd</div>
+            <div class="prize-title">Podium Pack</div>
+            <ul>
+              <li>Limited-edition jersey</li>
+              <li>CreateOS merch kit</li>
+              <li>Hall of fame badge</li>
+            </ul>
+            <button class="btn dark" disabled>Claim opens after final</button>
+          </div>
+          <div class="prize bronze">
+            <div class="prize-rank">🎉 Participation</div>
+            <div class="prize-title">Predictor Perks</div>
+            <ul>
+              <li>Profile badge for every active streak ≥ 7</li>
+              <li>Wallpaper pack + sticker drop</li>
+              <li>Early access to the next season</li>
+            </ul>
+            <button class="btn outline" id="claimPerks">Claim my perks</button>
+          </div>
+        </div>
+        <p class="muted small center">Prizes are subject to final terms. CreateOS Arena is a free fun-only game.</p>
+      </section>
+    </main>
+
+    <!-- Mobile bottom bar -->
+    <nav class="mobile-tabs">
+      <button class="m-tab active" data-tab="predict">🎯<span>Predict</span></button>
+      <button class="m-tab" data-tab="leaderboard">📊<span>Leaderboard</span></button>
+      <button class="m-tab" data-tab="how">ⓘ<span>How to play</span></button>
+      <button class="m-tab" data-tab="prizes">🎁<span>Prizes</span></button>
+    </nav>
+
+    <!-- ============== Modals ============== -->
+    <!-- Login -->
+    <div class="modal" id="loginModal" hidden>
+      <div class="modal-card">
+        <button class="modal-close" data-close>×</button>
+        <h3>Sign in to CreateOS Arena</h3>
+        <p class="muted">Use your Google account via CreateOS to save your streak and predictions.</p>
+        <button class="google-btn" id="googleLogin">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.13-.84 2.08-1.79 2.72v2.26h2.9c1.7-1.57 2.69-3.88 2.69-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.46-.81 5.95-2.18l-2.9-2.26c-.81.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.7H.96v2.32A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.96 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.28-1.72V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.04l3-2.32z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3 2.32C4.67 5.16 6.66 3.58 9 3.58z"/></svg>
+          Continue with Google
+        </button>
+        <p class="tiny muted">By continuing you accept the for-fun terms. No gambling.</p>
+      </div>
+    </div>
+
+    <!-- Favourite team -->
+    <div class="modal" id="favModal" hidden>
+      <div class="modal-card wide">
+        <button class="modal-close" data-close>×</button>
+        <h3>Pick your favourite team</h3>
+        <p class="muted">Themes your rank card, lineups, and news feed.</p>
+        <div class="team-grid" id="teamGrid"></div>
+        <div class="vote-panel">
+          <div class="vote-head">🎨 Theme votes — community pick</div>
+          <div class="vote-bars" id="voteBars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share -->
+    <div class="modal" id="shareModal" hidden>
+      <div class="modal-card">
+        <button class="modal-close" data-close>×</button>
+        <h3>Share your card</h3>
+        <p class="muted">Optimised for Instagram Stories, X, and WhatsApp.</p>
+        <div id="shareLinks" class="share-links"></div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

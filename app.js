@@ -11,6 +11,34 @@
 
   const STORAGE_KEY = 'coa_state_v1';
 
+  // ============================================================
+  // Google Sign-In (CreateOS) — Google Identity Services config
+  // ------------------------------------------------------------
+  // 1. Visit https://console.cloud.google.com/apis/credentials
+  // 2. Create an OAuth 2.0 Client ID of type "Web application"
+  // 3. Add your origins to "Authorized JavaScript origins":
+  //      http://localhost:8080
+  //      https://<your-github-user>.github.io
+  //      https://createos.sh         (or wherever you deploy)
+  // 4. Paste the Client ID below (it ends in .apps.googleusercontent.com)
+  // 5. (Optional) Override at runtime by setting:
+  //      window.GOOGLE_CLIENT_ID = '...' before app.js loads, OR
+  //      <meta name="google-signin-client_id" content="...">, OR
+  //      ?google_client_id=...  in the URL once (it's cached in localStorage)
+  // ============================================================
+  const GOOGLE_CLIENT_ID = resolveClientId('');
+
+  function resolveClientId(hardcoded) {
+    try {
+      const url = new URL(location.href);
+      const fromQs = url.searchParams.get('google_client_id');
+      if (fromQs) localStorage.setItem('coa_google_client_id', fromQs);
+      const fromLs = localStorage.getItem('coa_google_client_id');
+      const fromMeta = document.querySelector('meta[name="google-signin-client_id"]')?.content;
+      return window.GOOGLE_CLIENT_ID || fromLs || fromMeta || hardcoded || '';
+    } catch { return hardcoded || ''; }
+  }
+
   // ---------- mock data ----------
   const TEAMS = [
     { c: 'Brazil', f: '🇧🇷' }, { c: 'Argentina', f: '🇦🇷' }, { c: 'France', f: '🇫🇷' },
@@ -120,7 +148,14 @@
   function renderHeader() {
     $('#streakDays').textContent = state.streakDays;
     $('#streakHeadDays').textContent = Math.max(state.streakDays + 1, 5);
-    $('#avatarInitials').textContent = state.user ? state.user.initials : 'ZT';
+    const img = $('#avatarImg'); const initials = $('#avatarInitials');
+    if (state.user && state.user.picture) {
+      img.src = state.user.picture; img.hidden = false; initials.hidden = true;
+      img.style.cssText = 'width:100%;height:100%;border-radius:999px;object-fit:cover;';
+    } else {
+      img.hidden = true; initials.hidden = false;
+      initials.textContent = state.user ? state.user.initials : 'ZT';
+    }
   }
 
   // ---------- countdown (always running) ----------
@@ -376,17 +411,88 @@
     });
   }
 
-  // ---------- login ----------
-  function openLogin() { $('#loginModal').hidden = false; }
-  function fakeLogin() {
-    // Real wiring point: Google Identity Services / CreateOS OAuth
-    const user = { name: 'Ishan R.', email: 'you@createos.app', initials: 'IR' };
-    state.user = user; save();
+  // ---------- login (Google Identity Services) ----------
+  function openLogin() {
+    $('#loginModal').hidden = false;
+    mountGoogleButton();
+  }
+
+  function parseJwt(token) {
+    try {
+      const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const json = decodeURIComponent(atob(b64).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      return JSON.parse(json);
+    } catch { return null; }
+  }
+
+  function onCredential(resp) {
+    const payload = parseJwt(resp.credential);
+    if (!payload) { toast('Sign-in failed'); return; }
+    const name = payload.name || payload.email || 'Player';
+    state.user = {
+      sub: payload.sub,
+      name,
+      email: payload.email,
+      picture: payload.picture || null,
+      initials: name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+      credential: resp.credential,
+      exp: payload.exp,
+    };
+    save();
     renderHeader();
     $('#loginModal').hidden = true;
-    toast('Signed in via CreateOS');
+    toast(`Welcome, ${name.split(' ')[0]}`);
   }
-  function logout() { state.user = null; save(); renderHeader(); toast('Signed out'); }
+
+  let gsiInitialised = false;
+  function initGoogleOnce() {
+    if (gsiInitialised || !window.google || !google.accounts || !google.accounts.id) return false;
+    if (!GOOGLE_CLIENT_ID) return false;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: onCredential,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+      ux_mode: 'popup',
+    });
+    gsiInitialised = true;
+    return true;
+  }
+
+  function mountGoogleButton() {
+    const slot = $('#gsiButton'); const fallback = $('#gsiFallback');
+    if (!GOOGLE_CLIENT_ID) {
+      slot.hidden = true; fallback.hidden = false; return;
+    }
+    fallback.hidden = true; slot.hidden = false;
+    const tryRender = () => {
+      if (!initGoogleOnce()) return false;
+      slot.innerHTML = '';
+      google.accounts.id.renderButton(slot, {
+        type: 'standard', theme: 'filled_black', size: 'large',
+        text: 'continue_with', shape: 'pill', logo_alignment: 'left', width: 320,
+      });
+      // optional One Tap on first open
+      try { google.accounts.id.prompt(); } catch {}
+      return true;
+    };
+    if (!tryRender()) {
+      const iv = setInterval(() => { if (tryRender()) clearInterval(iv); }, 200);
+      setTimeout(() => clearInterval(iv), 8000);
+    }
+  }
+
+  function logout() {
+    try { if (window.google?.accounts?.id) google.accounts.id.disableAutoSelect(); } catch {}
+    state.user = null; save(); renderHeader(); toast('Signed out');
+  }
+
+  // Demo fallback (used only when no Client ID is configured)
+  function demoLogin() {
+    const user = { name: 'Ishan R.', email: 'you@createos.app', initials: 'IR' };
+    state.user = user; save(); renderHeader();
+    $('#loginModal').hidden = true; toast('Signed in (demo mode)');
+  }
 
   // ---------- share ----------
   function shareCardText() {
@@ -482,7 +588,7 @@
     }));
 
     $('#favPick').addEventListener('click', openFavModal);
-    $('#googleLogin').addEventListener('click', fakeLogin);
+    $('#googleLoginDemo')?.addEventListener('click', demoLogin);
     $('#downloadCard').addEventListener('click', downloadCard);
     $$('[data-share]').forEach((b) => b.addEventListener('click', () => openShare(b.dataset.share)));
     $$('[data-close]').forEach((b) => b.addEventListener('click', () => {
@@ -522,11 +628,36 @@
     renderBreakdown();
   }
 
+  // Expire stale Google sessions silently
+  function refreshSession() {
+    const u = state.user;
+    if (u && u.exp && Date.now() / 1000 > u.exp) {
+      state.user = null; save();
+    }
+  }
+
+  // Boot Google Identity Services as soon as the gsi/client script lands,
+  // so One Tap can prompt returning visitors automatically.
+  function bootGoogle() {
+    if (!GOOGLE_CLIENT_ID) return;
+    const tryIt = () => {
+      if (!initGoogleOnce()) return false;
+      if (!state.user) { try { google.accounts.id.prompt(); } catch {} }
+      return true;
+    };
+    if (!tryIt()) {
+      const iv = setInterval(() => { if (tryIt()) clearInterval(iv); }, 250);
+      setTimeout(() => clearInterval(iv), 10000);
+    }
+  }
+
   // ---------- boot ----------
   document.addEventListener('DOMContentLoaded', () => {
+    refreshSession();
     wire();
     renderAll();
     tickCountdown();
     setInterval(tickCountdown, 1000);
+    bootGoogle();
   });
 })();

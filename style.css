@@ -60,7 +60,9 @@ button { font-family: inherit; cursor: pointer; }
 .avatar {
   width: 36px; height: 36px; border-radius: 999px; background: #ecfdf5; color: #064e3b;
   border: 0; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 0;
 }
+.avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .avatar.small { width: 24px; height: 24px; font-size: 10px; }
 .avatar.me { background: var(--blue); color: #fff; }
 .menu {
@@ -365,6 +367,14 @@ details p { color: var(--muted); margin: 4px 0 0; font-size: 13px; }
   background: #fff; color: #1f2937; border: 0; padding: 12px; border-radius: 10px; font-weight: 600;
   margin: 14px 0 6px;
 }
+.gsi-slot { display: flex; justify-content: center; margin: 14px 0 6px; min-height: 44px; }
+.gsi-notice {
+  background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 10px; padding: 10px 12px; margin: 14px 0 8px; font-size: 12px; color: #fcd34d;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.gsi-notice b { color: #fef3c7; font-size: 13px; }
+.gsi-notice code { background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px; font-size: 11px; color: #e7f3ec; }
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; max-height: 320px; overflow-y: auto; padding: 4px; }
 .team-cell {
   background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 6px;

@@ -31,13 +31,34 @@ The frontend ships with mock fixtures, leaderboard, and news. Replace these touc
 
 | Feature | Hook | Where |
 | --- | --- | --- |
-| Google sign-in via CreateOS | `fakeLogin()` | `app.js` |
+| Google sign-in via CreateOS | `GOOGLE_CLIENT_ID` constant | `app.js` (see below) |
 | Fixtures + lock times | `MATCHES` | `app.js` |
 | Live scores | live tick `setInterval` block | `app.js` |
 | Leaderboard | `LEADERBOARD` | `app.js` |
 | Per-match breakdown | `BREAKDOWN` | `app.js` |
 | Favourite team news | `NEWS` map | `app.js` |
 | Lineups | `match.lineup` | `app.js` |
+
+## Google Sign-In setup
+
+Real Google Identity Services is already wired. To enable it:
+
+1. Go to [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
+2. Create an **OAuth 2.0 Client ID** of type **Web application**.
+3. Under **Authorized JavaScript origins**, add every origin the app will run on:
+   - `http://localhost:8080`
+   - `https://<your-github-user>.github.io`
+   - `https://createos.sh` (or whatever your final domain is)
+4. Copy the Client ID (ends with `.apps.googleusercontent.com`).
+5. Paste it into `app.js` at the `GOOGLE_CLIENT_ID` line.
+
+Alternative ways to supply the Client ID (no code edit):
+
+- Add `<meta name="google-signin-client_id" content="...">` to `index.html`.
+- Set `window.GOOGLE_CLIENT_ID = '...'` from a `<script>` before `app.js` loads.
+- Visit `?google_client_id=...` once — the value is cached in localStorage.
+
+When configured, the modal renders the official Google "Continue with" button and One Tap auto-prompts returning visitors. Without a Client ID the modal falls back to a demo sign-in so the UI keeps working.
 
 ## Features
 

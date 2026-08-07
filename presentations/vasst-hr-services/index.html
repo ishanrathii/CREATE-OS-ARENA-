@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VASST HR Services - Hiring Beyond the Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .presentation-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            min-height: 600px;
+            padding: 60px;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Slide Styles */
+        .slide-title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .slide-title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .slide-title-slide .tagline {
+            font-size: 1.8em;
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        .slide-title-slide p {
+            font-size: 1.2em;
+            opacity: 0.85;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .slide li {
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .box h3 {
+            margin-top: 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .benefit-item::before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .journey-step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .journey-step strong {
+            color: #764ba2;
+            font-size: 1.1em;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        .slide-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: #e0e0e0;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 30px;
+            }
+
+            .slide-title-slide h1 {
+                font-size: 2em;
+            }
+
+            .slide-title-slide .tagline {
+                font-size: 1.3em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                padding: 20px 30px;
+            }
+
+            .slide ul {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide slide-title-slide active">
+            <h1>VASST HR Services</h1>
+            <p class="tagline">"Hiring Beyond the Resume"</p>
+            <p>An AI-powered HR platform connecting employers with verified talent</p>
+        </div>
+
+        <!-- Slide 2: The Problem - Companies -->
+        <div class="slide">
+            <h2>The Problem</h2>
+            <h3>For Companies</h3>
+            <ul>
+                <li>Recruiters spend hours manually screening hundreds of resumes</li>
+                <li>Resumes often don't accurately reflect a candidate's practical skills</li>
+                <li>Small and medium-sized businesses can't afford dedicated HR teams or expensive recruitment software</li>
+                <li>Poor hiring decisions lead to higher employee turnover</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: The Problem - Job Seekers -->
+        <div class="slide">
+            <h2>The Problem</h2>
+            <h3>For Students & Job Seekers</h3>
+            <ul>
+                <li>Freshers have limited work experience, making it difficult to stand out</li>
+                <li>Talented students from Tier-2 and Tier-3 colleges are often overlooked</li>
+                <li>Candidates don't know which skills they need to improve for specific jobs</li>
+                <li>Job searching is time-consuming and discouraging</li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: Our Solution -->
+        <div class="slide">
+            <h2>Our Solution</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">VASST HR Services is an AI-powered HR platform that connects employers with verified talent.</p>
+            <p style="font-size: 1.1em; margin-bottom: 25px;">Instead of relying only on resumes, we evaluate candidates based on:</p>
+            <ul>
+                <li><strong>Actual skills</strong> - not just claimed expertise</li>
+                <li><strong>Aptitude</strong> - ability to learn and grow</li>
+                <li><strong>Communication ability</strong> - soft skills assessment</li>
+                <li><strong>Job readiness</strong> - practical preparation</li>
+            </ul>
+            <p style="font-size: 1.1em; margin-top: 25px;"><strong>Plus:</strong> Acts as a virtual HR department for startups and SMEs by automating recruitment, onboarding, and employee management.</p>
+        </div>
+
+        <!-- Slide 5: Vision & Mission -->
+        <div class="slide">
+            <div class="two-column">
+                <div class="box">
+                    <h3>Vision</h3>
+                    <p style="font-size: 1.1em; line-height: 1.8;">To create a future where hiring is based on skills and potential, not just resumes or college reputation.</p>
+                </div>
+                <div class="box">
+                    <h3>Mission</h3>
+                    <p style="font-size: 1.1em; line-height: 1.8;">To help businesses hire smarter while giving every job seeker an equal opportunity to showcase their abilities.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Target Customers -->
+        <div class="slide">
+            <h2>Target Customers</h2>
+            <h3>Primary Customers</h3>
+            <ul style="margin-bottom: 30px;">
+                <li>Startups</li>
+                <li>Small and Medium Enterprises (SMEs)</li>
+                <li>Recruitment agencies</li>
+            </ul>
+            <h3>Secondary Customers</h3>
+            <ul>
+                <li>Colleges and universities</li>
+                <li>Final-year students</li>
+                <li>Fresh graduates</li>
+                <li>Job seekers</li>
+            </ul>
+        </div>
+
+        <!-- Slide 7: How It Works - Steps 1-2 -->
+        <div class="slide">
+            <h2>How the Platform Works</h2>
+            <h3 style="margin-top: 0;">Step 1: Company Registration</h3>
+            <ul style="margin-bottom: 25px;">
+                <li>Post a job opening</li>
+                <li>Specify required skills, qualifications, experience, salary, and location</li>
+            </ul>
+            <h3>Step 2: Student Registration</h3>
+            <ul>
+                <li>Create professional profile</li>
+                <li>Add education, skills, projects, certifications, internship experience, resume</li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: How It Works - Steps 3-4 -->
+        <div class="slide">
+            <h2>Skill Verification & Analysis</h2>
+            <h3 style="margin-top: 0;">Step 3: AI Resume Analysis</h3>
+            <ul style="margin-bottom: 25px;">
+                <li>Extract key information</li>
+                <li>Identify technical and soft skills</li>
+                <li>Generate Resume Score</li>
+            </ul>
+            <h3>Step 4: Verified Skill Assessments</h3>
+            <ul>
+                <li>Aptitude tests</li>
+                <li>Communication assessments</li>
+                <li>Role-specific skill tests</li>
+                <li>Generate Verified Skill Score</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: How It Works - Steps 5-6 -->
+        <div class="slide">
+            <h2>Matching & Interview Preparation</h2>
+            <h3 style="margin-top: 0;">Step 5: AI Candidate Ranking</h3>
+            <ul style="margin-bottom: 25px;">
+                <li>Compare resume quality, skill score, communication ability, and personality fit</li>
+                <li>Generate compatibility score (e.g., 92% match)</li>
+                <li>Help recruiters quickly identify most suitable applicants</li>
+            </ul>
+            <h3>Step 6: AI Mock Interview</h3>
+            <ul>
+                <li>Practice interviews before applying</li>
+                <li>AI asks role-specific questions</li>
+                <li>Provide constructive feedback</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: How It Works - Steps 7-8 -->
+        <div class="slide">
+            <h2>Recruitment to Onboarding</h2>
+            <h3 style="margin-top: 0;">Step 7: Employer Dashboard</h3>
+            <ul style="margin-bottom: 25px;">
+                <li>View ranked candidates</li>
+                <li>Filter applicants & compare profiles</li>
+                <li>Schedule interviews & track progress</li>
+            </ul>
+            <h3>Step 8: Employee Onboarding</h3>
+            <ul>
+                <li>Offer letter generation</li>
+                <li>Digital document submission</li>
+                <li>Onboarding checklists & training modules</li>
+            </ul>
+        </div>
+
+        <!-- Slide 11: What Makes Us Different -->
+        <div class="slide">
+            <h2>What Makes VASST Different</h2>
+            <div style="margin-top: 40px;">
+                <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                    <p style="font-size: 1.2em; color: #999; margin-bottom: 10px;"><strong>Traditional Approach Asks:</strong></p>
+                    <p style="font-size: 1.3em; color: #666;">"Where did you study?"</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <p style="font-size: 1.2em; color: #667eea; margin-bottom: 10px;"><strong>VASST Asks:</strong></p>
+                    <p style="font-size: 1.3em; color: #667eea;"><strong>"What can you actually do?"</strong></p>
+                </div>
+            </div>
+            <p style="font-size: 1.1em; margin-top: 30px; line-height: 1.8;">We don't act as just another job portal. We focus on verified talent, enabling employers to hire based on ability rather than just qualifications.</p>
+        </div>
+
+        <!-- Slide 12: Revenue Model -->
+        <div class="slide">
+            <h2>Revenue Model</h2>
+            <p style="font-size: 1.1em; margin-bottom: 25px;">Multiple revenue streams:</p>
+            <ul>
+                <li>Monthly subscriptions from companies using the HR platform</li>
+                <li>Recruitment fee for each successful hire</li>
+                <li>Premium memberships for students seeking advanced career guidance</li>
+                <li>Campus recruitment packages for colleges</li>
+                <li>HR consulting and onboarding services for startups</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Benefits -->
+        <div class="slide">
+            <h2>Benefits</h2>
+            <div class="two-column">
+                <div>
+                    <h3 style="margin-top: 0;">For Companies</h3>
+                    <div class="benefit-item">Faster recruitment</div>
+                    <div class="benefit-item">Reduced hiring costs</div>
+                    <div class="benefit-item">Better hiring decisions</div>
+                    <div class="benefit-item">Lower employee turnover</div>
+                    <div class="benefit-item">Simplified HR processes</div>
+                </div>
+                <div>
+                    <h3 style="margin-top: 0;">For Students</h3>
+                    <div class="benefit-item">Equal skill-based opportunities</div>
+                    <div class="benefit-item">Clear feedback for improvement</div>
+                    <div class="benefit-item">Better interview preparation</div>
+                    <div class="benefit-item">Improved visibility to employers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Future Scope -->
+        <div class="slide">
+            <h2>Future Scope</h2>
+            <p style="font-size: 1.1em; margin-bottom: 25px;">As we grow, VASST HR Services will expand into:</p>
+            <ul>
+                <li>AI-powered career coaching</li>
+                <li>Employee performance management</li>
+                <li>Learning and development recommendations</li>
+                <li>Global remote hiring capabilities</li>
+                <li>Payroll and compliance services</li>
+                <li>Workforce analytics and insights</li>
+            </ul>
+        </div>
+
+        <!-- Slide 15: Sample User Journey -->
+        <div class="slide">
+            <h2>Sample User Journey - Priya's Story</h2>
+            <p style="font-size: 1.1em; margin-bottom: 20px;"><strong>Priya is a final-year BBA student:</strong></p>
+            <div class="journey-step">
+                <strong>✓ Creates VASST profile</strong> - Uploads resume and experience
+            </div>
+            <div class="journey-step">
+                <strong>✓ Completes assessments</strong> - Marketing assessment & AI mock interview
+            </div>
+            <div class="journey-step">
+                <strong>✓ Gets verified</strong> - Platform awards high Skill Score
+            </div>
+            <div class="journey-step">
+                <strong>✓ Receives guidance</strong> - Actionable resume improvement recommendations
+            </div>
+        </div>
+
+        <!-- Slide 16: User Journey - Success -->
+        <div class="slide">
+            <h2>Sample User Journey - Priya Gets Hired</h2>
+            <div class="journey-step">
+                <strong>Pune Startup Hiring Marketing Executive</strong><br/>
+                Uses VASST instead of manually reviewing hundreds of resumes
+            </div>
+            <div class="journey-step">
+                <strong>AI-Powered Shortlist</strong><br/>
+                Receives candidates ranked by AI compatibility scores
+            </div>
+            <div class="journey-step">
+                <strong>Perfect Match</strong><br/>
+                Priya appears among top matches based on verified skills
+            </div>
+            <div class="journey-step">
+                <strong>Result</strong><br/>
+                Priya gets interviewed and secures the job - Perfect candidate-employer match achieved
+            </div>
+        </div>
+
+        <!-- Slide 17: Call to Action -->
+        <div class="slide slide-title-slide">
+            <h1>Join VASST HR Services</h1>
+            <p class="tagline">"Hiring Beyond the Resume"</p>
+            <div style="margin-top: 40px;">
+                <p style="font-size: 1.3em; margin-bottom: 15px;">Transform how companies hire</p>
+                <p style="font-size: 1.3em;">Empower every job seeker to succeed</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="slide-number">Slide <span id="currentSlide">1</span> of <span id="totalSlides">17</span></span>
+            <div class="controls">
+                <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+                <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function changeSlide(n) {
+            showSlide(currentSlide + n);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) changeSlide(1);
+            if (e.key === 'ArrowLeft' && currentSlide > 0) changeSlide(-1);
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
